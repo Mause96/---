@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>키움증권 데이터 변환기</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; }
+        textarea { width: 100%; height: 150px; margin-bottom: 10px; }
+        input[type="text"] { width: calc(100% - 22px); margin-bottom: 10px; padding: 5px; }
+        button { padding: 10px 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>키움증권 데이터를 트레이딩뷰 형식으로 변환하기</h1>
+    <p>영웅문 HTS에서 복사한 데이터를 아래에 붙여넣으세요:</p>
+    <textarea id="inputData" placeholder="여기에 데이터를 붙여넣으세요..."></textarea><br>
+    <input type="text" id="fileName" placeholder="파일 이름을 입력하세요 (예: stock_codes)"><br>
+    <button onclick="convertAndDownload()">다운로드하기</button>
+
+    <script>
+        function convertAndDownload() {
+            const inputData = document.getElementById('inputData').value;
+            const fileName = document.getElementById('fileName').value || 'stock_codes';
+            const lines = inputData.split('\n');
+            const stockCodes = [];
+
+            // 첫 번째 줄은 제목 행이므로 제외하고 처리
+            for (let i = 1; i < lines.length; i++) {
+                const columns = lines[i].trim().split(/\t+/); // 탭으로 구분
+                if (columns.length > 1) {
+                    stockCodes.push("KRX:" + columns[0].replace("'", "")); // 종목코드에서 앞의 작은따옴표 제거 후 추가
+                }
+            }
+
+            const output = stockCodes.join(',\n');
+            const blob = new Blob([output], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `${fileName}.txt`;
+            link.click();
+        }
+    </script>
+</body>
+</html>
