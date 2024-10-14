@@ -27,15 +27,15 @@
 
             // 데이터 라인별로 처리하기
             for (let i = 1; i < lines.length; i++) {
-                const columns = lines[i].trim().split(/[\t\s]+/); // 탭 또는 공백으로 구분
+                const columns = lines[i].trim().split(/\t+|\s{2,}/); // 탭 또는 2개 이상의 공백으로 구분
                 if (columns.length > 1) {
                     let stockCode;
-                    // 첫 번째 유형: 종목코드가 두 번째 열에 위치
-                    if (columns[1].match(/\d{6}/)) {
-                        stockCode = columns[1].replace("'", "").trim();
+                    // 첫 번째 유형: 종목코드가 첫 번째 열에 위치
+                    if (columns[0].match(/^'?\d{6}/)) {
+                        stockCode = columns[0].replace("'", "").trim();
                     }
                     // 두 번째 유형: 종목코드가 마지막 열에 위치
-                    else {
+                    else if (columns[columns.length - 1].match(/^'?\d{6}/)) {
                         stockCode = columns[columns.length - 1].replace("'", "").trim();
                     }
                     if (stockCode && !isNaN(stockCode)) {
